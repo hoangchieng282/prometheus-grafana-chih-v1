@@ -1,0 +1,74 @@
+version: '3.6'
+
+volumes:
+  grafana-data:
+  prometheus-data:
+
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+    - 9090:9090
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --web.enable-admin-api
+    - --web.enable-lifecycle
+    privileged: true
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+    - cadvisor 
+    restart: always
+  cadvisor:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro   
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8008:8080
+    depends_on:
+    - redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+ # cadvisor:
+  #   image: 'google/cadvisor:latest'
+  #   container_name: cadvisor
+  #   volumes:
+  #         - /:/rootfs:ro
+  #         - /var/run:/var/run:ro
+  #         - /sys:/sys:ro
+  #         - /var/lib/docker/:/var/lib/docker:ro
+  #         - /dev/disk:/dev/disk/:ro
+  #   ports:
+  #       - '8082:8080'
+  #   networks:
+  #     - my_net
+  #   depends_on:
+  #     - web_nginx
+
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   environment:
+  #       - GF_SECURITY_ADMIN_PASSWORD=pass
+  #   ports:
+  #       - "3000:3000"
+  #   networks:
+  #     - my_net
+      
