@@ -1,0 +1,13 @@
+#This just my testing prometheus using docker container
+#the cadvisor allow us to monitor the resourse usage of all docker container.
+
+#Make sure you gave prometheus permission to access the volume:
+sudo chown -R prometheus:prometheus /data/prometheus
+
+#Run the container by:
+docker-compose up -d
+
+#You can now browse to the prometheus from: http://localhost:9090
+and grafana: http://localhost:3000
+cadvisor: http://localhost:8008
+
