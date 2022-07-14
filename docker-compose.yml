@@ -20,7 +20,6 @@ services:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
     - cadvisor 
-    restart: always
   cadvisor:
     image: google/cadvisor:latest
     volumes:
